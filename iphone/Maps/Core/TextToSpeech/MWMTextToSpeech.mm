@@ -15,6 +15,7 @@ namespace
 {
 NSString * const kUserDefaultsTTSLanguageBcp47 = @"UserDefaultsTTSLanguageBcp47";
 NSString * const kIsTTSEnabled = @"UserDefaultsNeedToEnableTTS";
+NSString * const kTTSAnnounceStreetNames = @"UserDefaultsTTSAnnounceStreetNames";
 NSString * const kDefaultLanguage = @"en-US";
 
 std::vector<std::pair<std::string, std::string>> availableLanguages()
@@ -118,6 +119,7 @@ using Observers = NSHashTable<Observer>;
   self.speechSynthesizer.delegate = nil;
 }
 - (std::vector<std::pair<std::string, std::string>>)availableLanguages { return _availableLanguages; }
+
 - (void)setNotificationsLocale:(NSString *)locale {
   NSUserDefaults * ud = NSUserDefaults.standardUserDefaults;
   [ud setObject:locale forKey:kUserDefaultsTTSLanguageBcp47];
@@ -126,9 +128,11 @@ using Observers = NSHashTable<Observer>;
 }
 
 - (BOOL)isValid { return _speechSynthesizer != nil && _speechVoice != nil; }
+
 + (BOOL)isTTSEnabled { return [NSUserDefaults.standardUserDefaults boolForKey:kIsTTSEnabled]; }
+
 + (void)setTTSEnabled:(BOOL)enabled {
-  if ([self isTTSEnabled] == enabled)
+  if ([MWMTextToSpeech isTTSEnabled] == enabled)
     return;
   auto tts = [self tts];
   if (!enabled)
@@ -140,6 +144,16 @@ using Observers = NSHashTable<Observer>;
   [tts onTTSStatusUpdated];
   if (enabled)
     [tts setActive:YES];
+}
+
++ (BOOL)announceStreetNames { return [NSUserDefaults.standardUserDefaults boolForKey:kTTSAnnounceStreetNames]; }
+
++ (void)setAnnounceStreetNames:(BOOL)enabled {
+  if ([MWMTextToSpeech announceStreetNames] == enabled)
+    return;
+  NSUserDefaults * ud = NSUserDefaults.standardUserDefaults;
+  [ud setBool:enabled forKey:kTTSAnnounceStreetNames];
+  [ud synchronize];
 }
 
 - (void)setActive:(BOOL)active {
@@ -154,6 +168,7 @@ using Observers = NSHashTable<Observer>;
 }
 
 - (BOOL)active { return [[self class] isTTSEnabled] && [MWMRouter areTurnNotificationsEnabled]; }
+
 + (NSString *)savedLanguage {
   return [NSUserDefaults.standardUserDefaults stringForKey:kUserDefaultsTTSLanguageBcp47];
 }

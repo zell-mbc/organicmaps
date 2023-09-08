@@ -5,6 +5,8 @@
 + (MWMTextToSpeech *)tts;
 + (BOOL)isTTSEnabled;
 + (void)setTTSEnabled:(BOOL)enabled;
++ (BOOL)announceStreetNames;
++ (void)setAnnounceStreetNames:(BOOL)enabled;
 + (NSString *)savedLanguage;
 
 + (void)addObserver:(id<MWMTextToSpeechObserver>)observer;
