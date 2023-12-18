@@ -1970,6 +1970,21 @@ void BookmarkManager::UpdateBookmark(kml::MarkId bmID, kml::BookmarkData const &
     SetLastEditedBmColor(bookmark->GetColor());
 }
 
+static bool AreFileNamesEqual(std::string const & f1, std::string const & f2)
+{
+  auto p1 = f1.size();
+  auto p2 = f2.size();
+  while (p1-- > 0 && p2-- > 0 )
+  {
+    auto const c1 = f1[p1];
+    if (c1 != f2[p2])
+      return false;
+    if (c1 == '/' && p1 != f1.size() - 1)
+      return true;
+  }
+  return false;
+}
+
 kml::MarkGroupId BookmarkManager::LastEditedBMCategory()
 {
   CHECK_THREAD_CHECKER(m_threadChecker, ());
@@ -1979,7 +1994,7 @@ kml::MarkGroupId BookmarkManager::LastEditedBMCategory()
 
   for (auto & cat : m_categories)
   {
-    if (cat.second->GetFileName() == m_lastCategoryUrl)
+    if (AreFileNamesEqual(cat.second->GetFileName(), m_lastCategoryUrl))
     {
       m_lastEditedGroupId = cat.first;
       return m_lastEditedGroupId;
