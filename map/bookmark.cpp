@@ -367,6 +367,14 @@ std::string BookmarkCategory::GetName() const
   return GetPreferredBookmarkStr(m_data.m_name);
 }
 
+std::string_view BookmarkCategory::GetFileNameWithoutPath() const
+{
+  if (auto const slashPos = m_file.find_last_of('/'); slashPos != std::string::npos)
+    return {m_file.data() + slashPos + 1, m_file.size() - slashPos - 1};
+
+  return m_file;
+}
+
 bool BookmarkCategory::HasElevationProfile() const
 {
   auto const it = m_data.m_properties.find(kHasElevationProfileProperty);

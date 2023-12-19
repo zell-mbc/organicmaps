@@ -1645,6 +1645,10 @@ void BookmarkManager::LoadState()
 {
   settings::TryGet(kLastEditedBookmarkCategory, m_lastCategoryUrl);
 
+  // Migration to fix a bug with unique full paths for each Testflight installation.
+  if (auto const slashPath = m_lastCategoryUrl.find_last_of('/'); slashPath != std::string::npos)
+    m_lastCategoryUrl.erase(0, slashPath + 1);
+
   uint32_t color;
   if (settings::Get(kLastEditedBookmarkColor, color) &&
       color > static_cast<uint32_t>(kml::PredefinedColor::None) &&
@@ -1970,21 +1974,6 @@ void BookmarkManager::UpdateBookmark(kml::MarkId bmID, kml::BookmarkData const &
     SetLastEditedBmColor(bookmark->GetColor());
 }
 
-static bool AreFileNamesEqual(std::string const & f1, std::string const & f2)
-{
-  auto p1 = f1.size();
-  auto p2 = f2.size();
-  while (p1-- > 0 && p2-- > 0 )
-  {
-    auto const c1 = f1[p1];
-    if (c1 != f2[p2])
-      return false;
-    if (c1 == '/' && p1 != f1.size() - 1)
-      return true;
-  }
-  return false;
-}
-
 kml::MarkGroupId BookmarkManager::LastEditedBMCategory()
 {
   CHECK_THREAD_CHECKER(m_threadChecker, ());
@@ -1992,14 +1981,10 @@ kml::MarkGroupId BookmarkManager::LastEditedBMCategory()
   if (HasBmCategory(m_lastEditedGroupId))
     return m_lastEditedGroupId;
 
-  for (auto & cat : m_categories)
-  {
-    if (AreFileNamesEqual(cat.second->GetFileName(), m_lastCategoryUrl))
-    {
-      m_lastEditedGroupId = cat.first;
-      return m_lastEditedGroupId;
-    }
-  }
+  for (auto const & [groupId, category] : m_categories)
+    if (category->GetFileNameWithoutPath() == m_lastCategoryUrl)
+      return m_lastEditedGroupId = groupId;
+
   m_lastEditedGroupId = CheckAndCreateDefaultCategory();
   return m_lastEditedGroupId;
 }
@@ -2012,8 +1997,11 @@ kml::PredefinedColor BookmarkManager::LastEditedBMColor() const
 
 void BookmarkManager::SetLastEditedBmCategory(kml::MarkGroupId groupId)
 {
+  if (m_lastEditedGroupId == groupId)
+    return;
+
   m_lastEditedGroupId = groupId;
-  m_lastCategoryUrl = GetBmCategory(groupId)->GetFileName();
+  m_lastCategoryUrl = GetBmCategory(groupId)->GetFileNameWithoutPath();
   SaveState();
 }
 
