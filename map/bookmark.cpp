@@ -3,6 +3,7 @@
 
 #include "indexer/scales.hpp"
 
+#include "base/file_name_utils.hpp"
 #include "base/string_utils.hpp"
 
 #include <sstream>
@@ -369,10 +370,7 @@ std::string BookmarkCategory::GetName() const
 
 std::string_view BookmarkCategory::GetFileNameWithoutPath() const
 {
-  if (auto const slashPos = m_file.find_last_of('/'); slashPos != std::string::npos)
-    return {m_file.data() + slashPos + 1, m_file.size() - slashPos - 1};
-
-  return m_file;
+  return base::FileNameFromFullPath(m_file);
 }
 
 bool BookmarkCategory::HasElevationProfile() const

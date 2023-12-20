@@ -1647,7 +1647,7 @@ void BookmarkManager::LoadState()
 
   // Migration to fix a bug with unique full paths for each Testflight installation.
   if (auto const slashPath = m_lastCategoryFile.find_last_of('/'); slashPath != std::string::npos)
-    m_lastCategoryFile.erase(0, slashPath + 1);
+    m_lastCategoryFile = base::FileNameFromFullPath(m_lastCategoryFile);
 
   uint32_t color;
   if (settings::Get(kLastEditedBookmarkColor, color) &&

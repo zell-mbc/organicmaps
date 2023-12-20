@@ -226,7 +226,7 @@ std::string GetBookmarksDirectory()
   return base::JoinPath(GetPlatform().SettingsDir(), "bookmarks");
 }
 
-std::string RemoveInvalidSymbols(std::string const & name)
+std::string RemoveInvalidSymbols(std::string_view name)
 {
   strings::UniString filtered;
   filtered.reserve(name.size());
@@ -266,7 +266,7 @@ std::string GenerateUniqueFileName(std::string const & path, std::string name, s
   return res;
 }
 
-std::string GenerateValidAndUniqueFilePathForKML(std::string const & fileName)
+std::string GenerateValidAndUniqueFilePathForKML(std::string_view fileName)
 {
   std::string filePath = RemoveInvalidSymbols(fileName);
   if (filePath.empty())
@@ -275,7 +275,7 @@ std::string GenerateValidAndUniqueFilePathForKML(std::string const & fileName)
   return GenerateUniqueFileName(GetBookmarksDirectory(), std::move(filePath), kKmlExtension);
 }
 
-std::string GenerateValidAndUniqueFilePathForGPX(std::string const & fileName)
+std::string GenerateValidAndUniqueFilePathForGPX(std::string_view fileName)
 {
   std::string filePath = RemoveInvalidSymbols(fileName);
   if (filePath.empty())
