@@ -110,6 +110,7 @@ char const kShowDebugInfo[] = "DebugInfo";
 
 auto constexpr kLargeFontsScaleFactor = 1.6;
 size_t constexpr kMaxTrafficCacheSizeBytes = 64 /* Mb */ * 1024 * 1024;
+auto constexpr kBuildingCentroidThreshold = 5.0;
 
 // TODO!
 // To adjust GpsTrackFilter was added secret command "?gpstrackaccuracy:xxx;"
@@ -2166,14 +2167,24 @@ std::optional<place_page::Info> Framework::BuildPlacePageInfo(
     }
   }
 
+  bool isBuildingSelected = false;
   if (isFeatureMatchingEnabled && !selectedFeature.IsValid())
+  {
     selectedFeature = FindBuildingAtPoint(buildInfo.m_mercator);
+    isBuildingSelected = true;
+  }
 
   bool showMapSelection = false;
   if (selectedFeature.IsValid())
   {
     // Selection circle should match feature
     FillFeatureInfo(selectedFeature, outInfo);
+
+    if (isBuildingSelected && mercator::DistanceOnEarth(outInfo.GetMercator(), buildInfo.m_mercator) > kBuildingCentroidThreshold)
+    {
+      // When user taps on a building far from it's centroid (>5m) move selection circle to tap position
+      outInfo.SetMercator(buildInfo.m_mercator);
+    }
     showMapSelection = true;
   }
   else if (!buildInfo.m_isLongTap || buildInfo.m_source != place_page::BuildInfo::Source::User)
