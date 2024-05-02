@@ -2171,7 +2171,7 @@ std::optional<place_page::Info> Framework::BuildPlacePageInfo(
   if (isFeatureMatchingEnabled && !selectedFeature.IsValid())
   {
     selectedFeature = FindBuildingAtPoint(buildInfo.m_mercator);
-    isBuildingSelected = true;
+    isBuildingSelected = selectedFeature.IsValid();
   }
 
   bool showMapSelection = false;
