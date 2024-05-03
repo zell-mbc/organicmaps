@@ -1992,8 +1992,12 @@ void Framework::OnTapEvent(place_page::BuildInfo const & buildInfo)
 
     return;
   }
-
-  if (placePageInfo)
+    
+  if (buildInfo.m_isLongTap) {
+    // Show or hide UI on long tap
+    DeactivateMapSelection(true /* notifyUI */);
+  }
+  else if (placePageInfo)
   {
     auto const prevTrackId = m_currentPlacePageInfo ? m_currentPlacePageInfo->GetTrackId()
                                                     : kml::kInvalidTrackId;
@@ -2156,7 +2160,7 @@ std::optional<place_page::Info> Framework::BuildPlacePageInfo(
   auto const isFeatureMatchingEnabled = buildInfo.IsFeatureMatchingEnabled();
 
   // Using VisualParams inside FindTrackInTapPosition/GetDefaultTapRect requires drapeEngine.
-  if (m_drapeEngine != nullptr && buildInfo.IsTrackMatchingEnabled() && buildInfo.m_isLongTap &&
+  if (m_drapeEngine != nullptr && buildInfo.IsTrackMatchingEnabled() &&
       !(isFeatureMatchingEnabled && selectedFeature.IsValid()))
   {
     auto const trackSelectionInfo = FindTrackInTapPosition(buildInfo);
@@ -2187,7 +2191,7 @@ std::optional<place_page::Info> Framework::BuildPlacePageInfo(
     }
     showMapSelection = true;
   }
-  else if (!buildInfo.m_isLongTap || buildInfo.m_source != place_page::BuildInfo::Source::User)
+  else if (buildInfo.m_source != place_page::BuildInfo::Source::User)
   {
     if (isFeatureMatchingEnabled)
       FillPointInfo(outInfo, buildInfo.m_mercator, {});
