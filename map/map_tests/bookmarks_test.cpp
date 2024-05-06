@@ -1475,7 +1475,7 @@ UNIT_CLASS_TEST(Runner, ExportAll)
     TEST(base::DeleteFileX(indexPath), ());
     TEST(base::DeleteFileX(tmpPath), ());
   };
-  bmManager.PrepareFileForSharing(std::move(categories), checker);
+  bmManager.PrepareFileForSharing(std::move(categories), checker, KmlFileType::Text);
 }
 
 UNIT_CLASS_TEST(Runner, ExportSingleUnicode)
@@ -1499,7 +1499,7 @@ UNIT_CLASS_TEST(Runner, ExportSingleUnicode)
     TEST(base::DeleteFileX(kmz), ());
     TEST(base::DeleteFileX(tmpPath), ());
   };
-  bmManager.PrepareFileForSharing(std::move(categories), checker);
+  bmManager.PrepareFileForSharing(std::move(categories), checker, KmlFileType::Text);
 }
 
 UNIT_CLASS_TEST(Runner, Bookmarks_BrokenFile)
