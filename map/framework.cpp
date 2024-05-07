@@ -2191,7 +2191,7 @@ std::optional<place_page::Info> Framework::BuildPlacePageInfo(
     }
     showMapSelection = true;
   }
-  else if (buildInfo.m_source != place_page::BuildInfo::Source::User)
+  else
   {
     if (isFeatureMatchingEnabled)
       FillPointInfo(outInfo, buildInfo.m_mercator, {});
