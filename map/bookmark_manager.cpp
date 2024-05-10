@@ -106,15 +106,10 @@ BookmarkManager::SharingResult ExportSingleFileKml(BookmarkManager::KMLDataColle
 BookmarkManager::SharingResult ExportSingleFileGpx(BookmarkManager::KMLDataCollectionPtr::element_type::value_type const & kmlToShare)
 {
   std::string fileName = GetFileNameForExport(kmlToShare);
-
   auto filePath = base::JoinPath(GetPlatform().TmpDir(), fileName + std::string{kGpxExtension});
-  SCOPE_GUARD(fileGuard, std::bind(&base::DeleteFileX, filePath));
-
   auto const categoryId = kmlToShare.second->m_categoryData.m_id;
-
   if (!SaveKmlFileSafe(*kmlToShare.second, filePath, KmlFileType::Gpx))
     return {{categoryId}, BookmarkManager::SharingResult::Code::FileError, "Bookmarks file does not exist."};
-
   return {{categoryId}, std::move(filePath)};
 }
 
