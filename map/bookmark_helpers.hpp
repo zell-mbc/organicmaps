@@ -75,8 +75,7 @@ enum class KmlFileType
 {
   Text,
   Binary,
-  Gpx,
-  Kmz
+  Gpx
 };
 
 inline std::string DebugPrint(KmlFileType fileType)
@@ -86,7 +85,6 @@ inline std::string DebugPrint(KmlFileType fileType)
   case KmlFileType::Text: return "Text";
   case KmlFileType::Binary: return "Binary";
   case KmlFileType::Gpx: return "GPX";
-  case KmlFileType::Kmz: return "KMZ";
   }
   UNREACHABLE();
 }

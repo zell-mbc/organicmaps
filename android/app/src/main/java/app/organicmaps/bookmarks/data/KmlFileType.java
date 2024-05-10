@@ -4,6 +4,5 @@ package app.organicmaps.bookmarks.data;
 public enum KmlFileType {
     Text,
     Binary,
-    Gpx,
-    Kmz
+    Gpx
 }
