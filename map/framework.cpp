@@ -110,7 +110,7 @@ char const kShowDebugInfo[] = "DebugInfo";
 
 auto constexpr kLargeFontsScaleFactor = 1.6;
 size_t constexpr kMaxTrafficCacheSizeBytes = 64 /* Mb */ * 1024 * 1024;
-auto constexpr kBuildingCentroidThreshold = 5.0;
+auto constexpr kBuildingCentroidThreshold = 10.0;
 
 // TODO!
 // To adjust GpsTrackFilter was added secret command "?gpstrackaccuracy:xxx;"
@@ -2184,10 +2184,13 @@ std::optional<place_page::Info> Framework::BuildPlacePageInfo(
     // Selection circle should match feature
     FillFeatureInfo(selectedFeature, outInfo);
 
-    if (isBuildingSelected && mercator::DistanceOnEarth(outInfo.GetMercator(), buildInfo.m_mercator) > kBuildingCentroidThreshold)
+    if (isBuildingSelected)
     {
-      // When user taps on a building far from it's centroid (>5m) move selection circle to tap position
-      outInfo.SetMercator(buildInfo.m_mercator);
+      // Calculate distance between building centroid and tap point
+      double distancePx = (m_currentModelView.GtoP(buildInfo.m_mercator) - m_currentModelView.GtoP(outInfo.GetMercator())).Length();
+      // If user taps on a building far from it's centroid (>10px) move selection circle to tap position
+      if (distancePx > kBuildingCentroidThreshold * df::VisualParams::Instance().GetVisualScale())
+        outInfo.SetMercator(buildInfo.m_mercator);
     }
     showMapSelection = true;
   }
