@@ -1502,6 +1502,24 @@ UNIT_CLASS_TEST(Runner, ExportSingleUnicode)
   bmManager.PrepareFileForSharing(std::move(categories), checker, KmlFileType::Text);
 }
 
+UNIT_CLASS_TEST(Runner, ExportSingleGpx)
+{
+  string file = GetPlatform().TestsDataPathForFile("gpx_test_data/route.gpx");
+  BookmarkManager bmManager(BM_CALLBACKS);
+  bmManager.EnableTestMode(true);
+  BookmarkManager::KMLDataCollection kmlDataCollection;
+  kmlDataCollection.emplace_back(file, LoadKmlFile(file, KmlFileType::Gpx));
+  bmManager.CreateCategories(std::move(kmlDataCollection));
+  auto categories = bmManager.GetUnsortedBmGroupsIdList();
+  auto checker = [](BookmarkManager::SharingResult const & result)
+  {
+    auto fileName = result.m_sharingPath;
+    TEST(fileName.find("Some random route.gpx") != std::string::npos, ());
+    TEST(base::DeleteFileX(fileName), ());
+  };
+  bmManager.PrepareFileForSharing(std::move(categories), checker, KmlFileType::Gpx);
+}
+
 UNIT_CLASS_TEST(Runner, Bookmarks_BrokenFile)
 {
   string const fileName = GetPlatform().TestsDataPathForFile("broken_bookmarks.kmb.test");
