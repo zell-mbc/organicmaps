@@ -1239,6 +1239,8 @@ public class MwmActivity extends BaseMwmFragmentActivity
         return;
 
       setFullscreen(!isFullscreen());
+      if (isFullscreen())
+        showFullscreenToastIfNeeded();
     }
     else
     {
@@ -1262,6 +1264,16 @@ public class MwmActivity extends BaseMwmFragmentActivity
     // Buttons are hidden in position chooser mode but we are not in fullscreen
     return Boolean.TRUE.equals(mMapButtonsViewModel.getButtonsHidden().getValue()) &&
         Framework.nativeGetChoosePositionMode() == Framework.ChoosePositionMode.NONE;
+  }
+
+  private void showFullscreenToastIfNeeded()
+  {
+    // Show the toast only 2 times so new behaviour doesn't confuse users
+    if (Config.longTapToastShowsCount(this) < 2)
+    {
+      Toast.makeText(this, R.string.long_tap_toast, Toast.LENGTH_LONG).show();
+      Config.incLongTapToastShowsCount(this);
+    }
   }
 
   @Override
