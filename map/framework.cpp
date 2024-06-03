@@ -1992,8 +1992,9 @@ void Framework::OnTapEvent(place_page::BuildInfo const & buildInfo)
 
     return;
   }
-    
-  if (buildInfo.m_isLongTap) {
+
+  if (buildInfo.m_isLongTap)
+  {
     // Show or hide UI on long tap
     DeactivateMapSelection(true /* notifyUI */);
   }
@@ -2056,7 +2057,7 @@ FeatureID Framework::FindBuildingAtPoint(m2::PointD const & mercator) const
     m_featuresFetcher.ForEachFeature(rect, [&](FeatureType & ft)
     {
       if (!featureId.IsValid() &&
-        ft.GetGeomType() == feature::GeomType::Area &&
+          ft.GetGeomType() == feature::GeomType::Area &&
           ftypes::IsBuildingChecker::Instance()(ft) &&
           ft.GetLimitRect(kScale).IsPointInside(mercator) &&
           feature::GetMinDistanceMeters(ft, mercator) == 0.0)
