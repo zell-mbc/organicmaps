@@ -7,6 +7,7 @@ protocol PlacePageViewProtocol: AnyObject {
   func showNextStop()
   func layoutIfNeeded()
   func updateWithLayout(_ layout: IPlacePageLayout)
+  func showAlert(_ alert: UIAlertController)
 }
 
 final class PlacePageScrollView: UIScrollView {
@@ -328,6 +329,10 @@ extension PlacePageViewController: PlacePageViewProtocol {
         self.rootViewController.dismissPlacePage()
       }
     })
+  }
+
+  func showAlert(_ alert: UIAlertController) {
+    present(alert, animated: true)
   }
 }
 

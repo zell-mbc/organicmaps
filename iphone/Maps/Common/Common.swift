@@ -7,6 +7,13 @@ func L(_ key: String) -> String { return NSLocalizedString(key, comment: "") }
 
 func alternative<T>(iPhone: T, iPad: T) -> T { return IPAD() ? iPad : iPhone }
 
+func alternative<T>(iPhone: T, iPad: T, iPadOnMac: T) -> T {
+  if #available(iOS 14.0, *), ProcessInfo.processInfo.isiOSAppOnMac {
+    return iPadOnMac
+  }
+  return alternative(iPhone: iPhone, iPad: iPad)
+}
+
 func iPadSpecific(_ f: () -> Void) {
   if IPAD() {
     f()

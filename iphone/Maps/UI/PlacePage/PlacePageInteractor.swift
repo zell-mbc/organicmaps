@@ -81,7 +81,7 @@ extension PlacePageInteractor: PlacePageInfoViewControllerDelegate {
         UserDefaults.standard.set(true, forKey: kUDDidShowKayakInformationDialog)
         MWMPlacePageManagerHelper.openKayak(self.placePageData)
       }))
-      self.mapViewController?.present(alert, animated: true)
+      presenter?.showAlert(alert)
     }
   }
 
@@ -122,6 +122,20 @@ extension PlacePageInteractor: PlacePageInfoViewControllerDelegate {
     let message = String(format: L("copied_to_clipboard"), content)
     UIImpactFeedbackGenerator(style: .medium).impactOccurred()
     Toast.toast(withText: message).show(withAlignment: .bottom)
+  }
+
+  func didPressOpenInApp(sourceView: UIView) {
+    let availableApps = OpenInApplication.availableApps
+    guard !availableApps.isEmpty else {
+      LOG(.error, "Applications selection sheet should not be presented when the list of available applications is empty.")
+      return
+    }
+    let openInAppActionSheet = UIAlertController.openInAppActionSheet(sourceView: sourceView, apps: availableApps) { [weak self] selectedApp in
+      guard let self else { return }
+      OpenInApplication.setLastUsedOpenInApp(selectedApp)
+      self.mapViewController?.openUrl(selectedApp.linkForCoordinates(placePageData.locationCoordinate), externally: true)
+    }
+    presenter?.showAlert(openInAppActionSheet)
   }
 }
 
