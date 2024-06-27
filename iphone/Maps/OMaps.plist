@@ -92,6 +92,8 @@
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>mailto</string>
+		<string>comgooglemaps</string>
+		<string>osmandmaps</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
