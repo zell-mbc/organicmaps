@@ -34,6 +34,9 @@ final class RecentlyDeletedCategoriesViewController: MWMViewController {
         self.tableView.update { self.tableView.reloadSections(indexes, with: .automatic) }
       }
     }
+    viewModel.onCategoriesIsEmpty = { [weak self] in
+      self?.goBack()
+    }
   }
   
   @available(*, unavailable)
@@ -78,10 +81,11 @@ final class RecentlyDeletedCategoriesViewController: MWMViewController {
     searchController.searchBar.delegate = self
     searchController.searchBar.applyTheme()
     navigationItem.searchController = searchController
-    navigationItem.hidesSearchBarWhenScrolling = false
+    navigationItem.hidesSearchBarWhenScrolling = true
   }
 
   private func setupTableView() {
+    tableView.styleName = "TableView:PressBackground";
     tableView.allowsMultipleSelectionDuringEditing = true
     tableView.register(cell: RecentlyDeletedTableViewCell.self)
     tableView.setEditing(true, animated: false)

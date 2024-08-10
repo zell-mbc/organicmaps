@@ -17,7 +17,13 @@ final class RecentlyDeletedCategoriesViewModel: NSObject {
   }
 
   private var recentlyDeletedCategoriesManager: BookmarksManager
-  private var dataSource: [Section.Model] = []
+  private var dataSource: [Section.Model] = [] {
+    didSet {
+      if dataSource.isEmpty {
+        onCategoriesIsEmpty?()
+      }
+    }
+  }
   private(set) var state: State = .nothingSelected
   private(set) var filteredDataSource: [Section.Model] = []
   private(set) var selectedIndexPaths: [IndexPath] = []
@@ -25,6 +31,7 @@ final class RecentlyDeletedCategoriesViewModel: NSObject {
 
   var stateDidChange: ((State) -> Void)?
   var filteredDataSourceDidChange: (([Section.Model]) -> Void)?
+  var onCategoriesIsEmpty: (() -> Void)?
 
   init(bookmarksManager: BookmarksManager) {
     self.recentlyDeletedCategoriesManager = bookmarksManager
